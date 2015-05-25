@@ -332,23 +332,28 @@ function ExecuteCommand( tUser, sCmd, sData )
 			Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! You don't have access to this command." )
 			return true
 		end
-		if not tFunction.CheckModerator( tBreak[1] ) then
-			Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! The user "..tBreak[1].." is not a moderator." )
-			return true
+		local mod={}
+		for iIndex,sNick in ipairs( tBreak ) do
+
+		    		    
+		    if not RegMan.GetReg( tBreak[iIndex] ) then
+		        Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! The user "..tBreak[iIndex].." is unregistered at the moment." )
+		        return true
+		    elseif not tProfiles.AllowAdmin[tUser.iProfile] then
+		        RegMan.ChangeReg( tBreak[iIndex], RegMan.GetReg(tBreak[iIndex]).sPassword, tCfg.iRegProfile )
+		        return true
+		    end
+
+		    tOffliner.delmod( tUser, tBreak[iIndex] )
+		    sAllModerators, sAllCategories = tFunction.Connect()
+		    table.insert(mod,tBreak[iIndex])
+
 		end
-		tOffliner.delmod( tUser, tBreak[1] )
-		sAllModerators, sAllCategories = tFunction.Connect()
-		local sChatMessage = "Moderator removed: "..tBreak[1].." ."
-		tFunction.SendToAll( tUser.sNick, sChatMessage )
 		SendToRoom( tUser.sNick, sChatMessage, tCfg.sReportBot )
-		if not RegMan.GetReg( tBreak[1] ) then
-			Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! The user "..tBreak[1].." is unregistered at the moment." )
-			return true
-		elseif not tProfiles.AllowAdmin[tUser.iProfile] then
-			RegMan.ChangeReg( tBreak[1], RegMan.GetReg(tBreak[1]).sPassword, tCfg.iRegProfile )
-			return true
-		end
-		return true
+		tFunction.SendToAll( tUser.sNick, sChatMessage )
+		local sChatMessage = "Moderator(s) removed: "..print(mod).." ."
+		
+
 
 	elseif sCmd == "addctg" then
 		if not tProfiles.AllowAdmin[tUser.iProfile] then
