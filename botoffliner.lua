@@ -309,23 +309,28 @@ function ExecuteCommand( tUser, sCmd, sData )
 			Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! You don't have access to this command." )
 			return true
 		end
-		if not RegMan.GetReg( tBreak[1] ) then
-			Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! The user "..tBreak[1].." must register first." )
-			return true
-		elseif tFunction.CheckModerator( tBreak[1] ) then
-			Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! The user "..tBreak[1].." is already a moderator." )
-			return true
+		local mod={}
+		for iIndex,sNick in ipairs( tBreak ) do
+
+			if not RegMan.GetReg( tBreak[iIndex] ) then
+				Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! The user "..tBreak[iIndex].." must register first." )
+				return true
+			elseif tFunction.CheckModerator( tBreak[iIndex] ) then
+				Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! The user "..tBreak[iIndex].." is already a moderator." )
+				return true
+			end
+			RegMan.ChangeReg( tBreak[iIndex], RegMan.GetReg(tBreak[iIndex]).sPassword, tCfg.iModProfile )
+			if tOffliner.addmod( tUser, tBreak[iIndex] ) then
+				sAllModerators, sAllCategories = tFunction.Connect()
+				table.insert(mod,tBreak[iIndex])
+				return true
+			else
+				return true
+			end
 		end
-		RegMan.ChangeReg( tBreak[1], RegMan.GetReg(tBreak[1]).sPassword, tCfg.iModProfile )
-		if tOffliner.addmod( tUser, tBreak[1] ) then
-			sAllModerators, sAllCategories = tFunction.Connect()
-			local sChatMessage = "New moderator: "..tBreak[1].." ."
-			tFunction.SendToAll( tUser.sNick, sChatMessage )
-			SendToRoom( tUser.sNick, sChatMessage, tCfg.sReportBot )
-			return true
-		else
-			return true
-		end
+		local sChatMessage = "New moderator: "..print(mod).." ."
+		tFunction.SendToAll( tUser.sNick, sChatMessage )
+		SendToRoom( tUser.sNick, sChatMessage, tCfg.sReportBot )
 
 	elseif sCmd == "delmod" then
 		if not tProfiles.AllowVIP[tUser.iProfile] then
@@ -334,8 +339,7 @@ function ExecuteCommand( tUser, sCmd, sData )
 		end
 		local mod={}
 		for iIndex,sNick in ipairs( tBreak ) do
-
-		    		    
+			
 		    if not RegMan.GetReg( tBreak[iIndex] ) then
 		        Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! The user "..tBreak[iIndex].." is unregistered at the moment." )
 		        return true
