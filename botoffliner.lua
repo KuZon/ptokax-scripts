@@ -309,7 +309,7 @@ function ExecuteCommand( tUser, sCmd, sData )
 			Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! You don't have access to this command." )
 			return true
 		end
-		local mod={}
+		local tMod={}
 		for iIndex,sNick in ipairs( tBreak ) do
 
 			if not RegMan.GetReg( tBreak[iIndex] ) then
@@ -322,13 +322,13 @@ function ExecuteCommand( tUser, sCmd, sData )
 			RegMan.ChangeReg( tBreak[iIndex], RegMan.GetReg(tBreak[iIndex]).sPassword, tCfg.iModProfile )
 			if tOffliner.addmod( tUser, tBreak[iIndex] ) then
 				sAllModerators, sAllCategories = tFunction.Connect()
-				table.insert(mod,tBreak[iIndex])
+				table.insert(tMod,tBreak[iIndex])
 				return true
 			else
 				return true
 			end
 		end
-		local sChatMessage = "New moderator: "..print(mod).." ."
+		local sChatMessage = "New moderator: "..print(tMod).." ."
 		tFunction.SendToAll( tUser.sNick, sChatMessage )
 		SendToRoom( tUser.sNick, sChatMessage, tCfg.sReportBot )
 
@@ -337,7 +337,7 @@ function ExecuteCommand( tUser, sCmd, sData )
 			Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! You don't have access to this command." )
 			return true
 		end
-		local mod={}
+		local tMod={}
 		for iIndex,sNick in ipairs( tBreak ) do
 			
 		    if not RegMan.GetReg( tBreak[iIndex] ) then
@@ -350,12 +350,12 @@ function ExecuteCommand( tUser, sCmd, sData )
 
 		    tOffliner.delmod( tUser, tBreak[iIndex] )
 		    sAllModerators, sAllCategories = tFunction.Connect()
-		    table.insert(mod,tBreak[iIndex])
+		    table.insert(tMod,tBreak[iIndex])
 
 		end
 		SendToRoom( tUser.sNick, sChatMessage, tCfg.sReportBot )
 		tFunction.SendToAll( tUser.sNick, sChatMessage )
-		local sChatMessage = "Moderator(s) removed: "..print(mod).." ."
+		local sChatMessage = "Moderator(s) removed: "..print(tMod).." ."
 		
 
 
