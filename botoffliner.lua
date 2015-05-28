@@ -365,6 +365,8 @@ function ExecuteCommand( tUser, sCmd, sData )
 			return true
 		end
 		tOffliner.addctg( tUser, tBreak[1] )
+		tFunction.SendToAll( tUser.sNick, sChatMessage )
+		local sChatMessage="New category added : "..tBreak[1].." ."
 		return true
 
 	elseif sCmd == "delctg" then
@@ -372,6 +374,9 @@ function ExecuteCommand( tUser, sCmd, sData )
 			Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! You don't have access to this command." )
 			return true
 		end
+		tOffliner.delctg( tUser, tBreak[1] )
+		tFunction.SendToAll( tUser.sNick, sChatMessage )
+		local sChatMessage="Category removed : "..tBreak[1].." ."		
 		return true
 
 	else
