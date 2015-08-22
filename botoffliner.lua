@@ -244,6 +244,8 @@ function ExecuteCommand( tUser, sCmd, sData )
 			local bFlag, Value = tOffliner.am( tUser, iID, sMagnet )
 			if not bFlag then
 				Core.SendPmToUser( tUser, tConfig.sBotName, "Something went wrong. Contact hjpotter92" )
+		    if Value == -1 then
+		    	Core.SendPmToUser( tUser, tConfig.sBotName, "Magnet already exists in entry" )		    
 			else
 				local sRoomReply, sPersonalReply = "Magnet %s added for entry #%d - %s", "The magnet has been added at ID #%d to entry #%d."
 				sRoomReply = sRoomReply:format(sMagnet, iID, tRow.msg)
