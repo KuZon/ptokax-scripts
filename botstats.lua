@@ -176,12 +176,19 @@ function ExecuteCommand( tUser, sCmd, sMessage )
 			sReply = DeletePoll( tUser.sNick, tTokens[2] )
 		end
 	end
-	return Reply( tUser, sReply )
+	return PollMessage( tUser, sReply )
 end
 
 function Reply( tUser, sMessage )
 	if not sMessage then return false end
 	Core.SendPmToUser( tUser, tConfig.tBot.sName, sMessage )
+	return true
+end
+
+function PollMessage( tUser, sMessage )
+	if not sMessage then return false end
+	Core.SendPmToUser( tUser, tConfig.tBot.sName, sMessage.."pm !poll help to [BOT]Stats for more information" )
+	Core.SendToAll( sMessage )
 	return true
 end
 
