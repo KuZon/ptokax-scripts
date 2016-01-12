@@ -89,6 +89,13 @@ CREATE TABLE IF NOT EXISTS `votes` (
   UNIQUE KEY `poll_id_nick` (`poll_id`,`nick`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `uptime` (
+  `id` bigint(10) unsigned NOT NULL AUTO_INCREMENT,
+  `nick` varchar(25) NOT NULL,
+  `time` bigint(10) unsigned DEFAULT '00000',
+  UNIQUE KEY `nick` (`nick`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
 -- Dumping structure for trigger stats.MAXTOKS
 SET @OLDTMP_SQL_MODE=@@SQL_MODE, SQL_MODE='';
 DELIMITER //

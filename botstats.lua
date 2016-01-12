@@ -40,6 +40,8 @@ function OnStartup()
 	dofile( tPaths.sExtPath.."stats/toks.lua" )
 	dofile( tPaths.sExtPath.."stats/hubtopic.lua" )
 	dofile( tPaths.sExtPath.."stats/polls.lua" )
+	dofile( tPaths.sExtPath.."stats/uptime.lua" )
+
 
 	tUserStats, tBotStats = {}, {}
 	tConfig.tTimers = {
@@ -47,7 +49,22 @@ function OnStartup()
 		TmrMan.AddTimer( 5 * 60 * 10^3, "UpdateToks" ),					-- Every 5 minutes
 		TmrMan.AddTimer( 24 * 60 * 60 * 10^3, "Inflation" ),				-- Once every day
 		TmrMan.AddTimer( 24 * 60 * 60 * 10^3, "GrantAllowance" ),		-- Once every day
+		TmrMan.AddTimer( 60 * 10^3, "UpdateHubtime" ),                 -- every 1 minute /60 sec
 	}
+
+	tProfiles = {
+		AllowVIP = {
+			[0] = true,			-- Admin
+			[1] = true,			-- God
+			[2] = true,			-- OP
+			[3] = true,			-- VIP
+			[4] = false,		-- Mods
+			[5] = false,		-- Reg
+			[6] = false,		-- sVIP
+			[7] = false,		-- gymkhana
+		},
+	}
+
 	local fHelp = io.open( tPaths.sTxtPath..tConfig.sHelpFile, "r" )
 	tHelp.sHelp = fHelp:read "*a"
 	fHelp:close()
@@ -178,7 +195,29 @@ function ExecuteCommand( tUser, sCmd, sMessage )
 			sReply = DeletePoll( tUser.sNick, tTokens[2] )
 		end
 	end
+
+	if sCmd == "myhubtime" then 
+		sReply = hubTime( tUser )
+
+	elseif sCmd == "tophubbers" then
+		local iLimit = tonumber( tTokens[1] )
+		if not iLimit then iLimit =15 end
+		if iLimit > 100 then iLimit = 100 end
+		sReply = topHubbers( iLimit )
+
+	elseif sCmd == "hubtime" then
+		if tTokens[1] and tProfiles.AllowVIP[tUser.iProfile] then
+			sReply = userTime( tTokens[1] )
+		elseif not tProfiles.AllowVIP[tUser.iProfile] then
+			sReply = "you don't have access to this command"			
+		else
+			sReply = "enter a valid nick"
+		end
+	end
+
 	return Reply( tUser, sReply )
+
+
 end
 
 function Reply( tUser, sMessage )
