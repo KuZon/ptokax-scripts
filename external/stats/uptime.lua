@@ -15,14 +15,14 @@ function UpdateTime( tUser )
 	local sQuery = [[INSERT INTO `uptime`(`nick`,`time`)
 		VALUES( '%s','%d' )
 		ON DUPLICATE KEY
-		UPDATE uptime = uptime + %d
+		UPDATE time = time + %d
 		]]
 	local SQLCur = assert( sqlCon:execute(string.format(sQuery, sNick, iFactor, iFactor)) )
 end
 
 function hubTime( tUser )
 	local sNick = sqlCon:escape(tUser.sNick)
-	local sQuery = [[SELECT * FROM 'uptime' WHERE 'nick'=%s]]
+	local sQuery = [[SELECT * FROM `uptime` WHERE `nick`='%s']]
 	tSQLResults = assert( sqlCon:execute( string.format( sQuery, sNick ) ) )
 	tRow = tSQLResults:fetch ({}, "a")
 	if tRow then
@@ -43,7 +43,7 @@ function topHubbers( iLimit )
 	i=1
 	while tRow do
 		local iTotal = tonumber( tRow.time )
-		sTemp = conversion ( iTotal )
+		sTemp = tRow.nick.."\t"..conversion ( iTotal )
 		sList = sList..sTemp.."\n"
 		tRow = tSQLResults:fetch ({}, "a")
 		i = i + 1
@@ -53,7 +53,7 @@ end
 
 function userTime( tUser )
 	local sNick = sqlCon:escape(tUser.sNick)
-	local sQuery = [[SELECT * FROM 'uptime' WHERE 'nick'=%s]]
+	local sQuery = [[SELECT * FROM `uptime` WHERE `nick`='%s']]
 	tSQLResults = assert( sqlCon:execute( string.format( sQuery, sNick ) ) )
 	tRow = tSQLResults:fetch ({}, "a")
 	if tRow then
@@ -69,9 +69,9 @@ end
 function conversion( iTemp )
 	local iTotal = tonumber( tRow.time )
 	local iYear = math.floor( iTotal/( 60*24*365 ))
-	local iMonth = math.floor( ( iTotal/( 60*24*12 ))-(12*iYear) )
-	local iDay=math.floor( (iTotal/(60*24))-(30*iMonth) )
-	local iHour = math.floor( (iTotal/24)-iDay)
+	local iMonth = math.floor( ( iTotal/( 60*24*30 ) )-(12*iYear))
+	local iDay=math.floor( (iTotal/(60*24))-(30*iMonth)-(360*iYear) )
+	local iHour = math.floor( (iTotal/60)-(24*iDay)-(30*24*iMonth)-(360*24*iYear))
 	return (iYear .. " Years " ..iMonth.." Months "..iDay.." Days "..iHour.."Hours" )	
 end
 

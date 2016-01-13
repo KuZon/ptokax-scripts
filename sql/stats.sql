@@ -91,9 +91,10 @@ CREATE TABLE IF NOT EXISTS `votes` (
 
 CREATE TABLE IF NOT EXISTS `uptime` (
   `id` bigint(10) unsigned NOT NULL AUTO_INCREMENT,
-  `nick` varchar(25) NOT NULL,
+  `nick` varchar(25) NOT NULL UNIQUE,
   `time` bigint(10) unsigned DEFAULT '00000',
-  UNIQUE KEY `nick` (`nick`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_nick` (`id`,`nick`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- Dumping structure for trigger stats.MAXTOKS
