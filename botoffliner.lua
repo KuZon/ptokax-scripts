@@ -244,7 +244,7 @@ function ExecuteCommand( tUser, sCmd, sData )
 			local bFlag, Value = tOffliner.am( tUser, iID, sMagnet )
 			if not bFlag then
 				Core.SendPmToUser( tUser, tConfig.sBotName, "Something went wrong. Contact hjpotter92" )
-		    if Value == -1 then
+		    	elseif Value == -1 then
 		    	Core.SendPmToUser( tUser, tConfig.sBotName, "Magnet already exists in entry" )		    
 			else
 				local sRoomReply, sPersonalReply = "Magnet %s added for entry #%d - %s", "The magnet has been added at ID #%d to entry #%d."
@@ -312,7 +312,7 @@ function ExecuteCommand( tUser, sCmd, sData )
 			return true
 		end
 		local tMod={}
-		for iIndex,sNick in ipairs( tBreak ) do
+		for iIndex, sNick in ipairs( tBreak ) do
 
 			if not RegMan.GetReg( tBreak[iIndex] ) then
 				Core.SendPmToUser( tUser, tCfg.sBotName, "Sorry! The user "..tBreak[iIndex].." must register first." )
@@ -330,7 +330,7 @@ function ExecuteCommand( tUser, sCmd, sData )
 				return true
 			end
 		end
-		local sChatMessage = "New moderator: "..print(tMod).." ."
+		local sChatMessage = "New moderator(s): "..print(table.concat(tMod, ", ")).." ."
 		tFunction.SendToAll( tUser.sNick, sChatMessage )
 		SendToRoom( tUser.sNick, sChatMessage, tCfg.sReportBot )
 
@@ -357,7 +357,7 @@ function ExecuteCommand( tUser, sCmd, sData )
 		end
 		SendToRoom( tUser.sNick, sChatMessage, tCfg.sReportBot )
 		tFunction.SendToAll( tUser.sNick, sChatMessage )
-		local sChatMessage = "Moderator(s) removed: "..print(tMod).." ."
+		local sChatMessage = "Moderator(s) removed: "..print(table.concat(tMod, ", ")).." ."
 		
 
 
